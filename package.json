@@ -1,0 +1,45 @@
+{
+  "name": "dairy-ekart",
+  "version": "2.0.0",
+  "description": "Modern Dairy E-Commerce Platform built with React.js, Node.js, Express.js, and MongoDB",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "cd server && npm start",
+    "server": "cd server && npm run start",
+    "client": "cd client && npm start",
+    "dev": "concurrently \"npm run start\" \"npm run client\"",
+    "data:import": "cd server && npm run data:import",
+    "data:destroy": "cd server && npm run data:destroy",
+    "build": "cd client && npm run build",
+    "install:all": "npm install && cd server && npm install && cd ../client && npm install",
+    "heroku-postbuild": "cd client && npm install && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bilalmirza74/dairy-ekart.git"
+  },
+  "keywords": [
+    "react",
+    "nodejs",
+    "express",
+    "mongodb",
+    "ecommerce",
+    "dairy",
+    "redux",
+    "jwt",
+    "bootstrap"
+  ],
+  "author": "Your Name <your.email@example.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bilalmirza74/dairy-ekart/issues"
+  },
+  "homepage": "https://github.com/bilalmirza74/dairy-ekart#readme",
+  "devDependencies": {
+    "concurrently": "^7.6.0"
+  },
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  }
+}

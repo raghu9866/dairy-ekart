@@ -3,6 +3,12 @@ import {
   PRODUCT_LIST_REQUEST,
   PRODUCT_LIST_SUCCESS,
   PRODUCT_LIST_FAIL,
+  PRODUCT_SEARCH_REQUEST,
+  PRODUCT_SEARCH_SUCCESS,
+  PRODUCT_SEARCH_FAIL,
+  PRODUCT_CATEGORY_REQUEST,
+  PRODUCT_CATEGORY_SUCCESS,
+  PRODUCT_CATEGORY_FAIL,
   PRODUCT_DETAILS_REQUEST,
   PRODUCT_DETAILS_SUCCESS,
   PRODUCT_DETAILS_FAIL,
@@ -17,11 +23,25 @@ import {
   PRODUCT_UPDATE_FAIL,
 } from '../constants/productConstants';
 
-export const listProducts = () => async (dispatch) => {
+export const listProducts = (params = {}) => async (dispatch) => {
   try {
     dispatch({ type: PRODUCT_LIST_REQUEST });
 
-    const { data } = await axios.get('/api/products');
+    // Build query string from params
+    const queryParams = new URLSearchParams();
+    if (params.keyword) queryParams.append('keyword', params.keyword);
+    if (params.category) queryParams.append('category', params.category);
+    if (params.sortBy) queryParams.append('sortBy', params.sortBy);
+    if (params.page) queryParams.append('page', params.page);
+    if (params.limit) queryParams.append('limit', params.limit);
+    if (params.minPrice) queryParams.append('minPrice', params.minPrice);
+    if (params.maxPrice) queryParams.append('maxPrice', params.maxPrice);
+    if (params.inStock !== undefined) queryParams.append('inStock', params.inStock);
+
+    const queryString = queryParams.toString();
+    const url = queryString ? `/api/products?${queryString}` : '/api/products';
+    
+    const { data } = await axios.get(url);
     console.log('Axios response data:', data);
 
     dispatch({
@@ -31,6 +51,67 @@ export const listProducts = () => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: PRODUCT_LIST_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+export const searchProducts = (keyword, params = {}) => async (dispatch) => {
+  try {
+    dispatch({ type: PRODUCT_SEARCH_REQUEST });
+
+    // Build query string from params
+    const queryParams = new URLSearchParams({ keyword });
+    if (params.category) queryParams.append('category', params.category);
+    if (params.sortBy) queryParams.append('sortBy', params.sortBy);
+    if (params.page) queryParams.append('page', params.page);
+    if (params.limit) queryParams.append('limit', params.limit);
+    if (params.minPrice) queryParams.append('minPrice', params.minPrice);
+    if (params.maxPrice) queryParams.append('maxPrice', params.maxPrice);
+    if (params.inStock !== undefined) queryParams.append('inStock', params.inStock);
+
+    const { data } = await axios.get(`/api/products?${queryParams.toString()}`);
+
+    dispatch({
+      type: PRODUCT_SEARCH_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: PRODUCT_SEARCH_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+export const getProductsByCategory = (category, params = {}) => async (dispatch) => {
+  try {
+    dispatch({ type: PRODUCT_CATEGORY_REQUEST });
+
+    // Build query string from params
+    const queryParams = new URLSearchParams({ category });
+    if (params.sortBy) queryParams.append('sortBy', params.sortBy);
+    if (params.page) queryParams.append('page', params.page);
+    if (params.limit) queryParams.append('limit', params.limit);
+    if (params.minPrice) queryParams.append('minPrice', params.minPrice);
+    if (params.maxPrice) queryParams.append('maxPrice', params.maxPrice);
+    if (params.inStock !== undefined) queryParams.append('inStock', params.inStock);
+
+    const { data } = await axios.get(`/api/products?${queryParams.toString()}`);
+
+    dispatch({
+      type: PRODUCT_CATEGORY_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: PRODUCT_CATEGORY_FAIL,
       payload:
         error.response && error.response.data.message
           ? error.response.data.message
