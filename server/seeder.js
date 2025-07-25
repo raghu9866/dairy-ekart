@@ -32,8 +32,13 @@ const importData = async () => {
     await Product.deleteMany();
     await User.deleteMany();
 
+    console.log('Encrypting user passwords...');
+    const encryptedUsers = await Promise.all(users.map(async (user) => ({
+      ...user,
+      password: await bcrypt.hash(user.password, 10),
+    })));
     console.log('Creating users...');
-    const createdUsers = await User.insertMany(users);
+    const createdUsers = await User.insertMany(encryptedUsers);
     console.log(`${createdUsers.length} users created`);
 
     const adminUser = createdUsers[0]._id;
